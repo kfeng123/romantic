@@ -309,3 +309,48 @@ out=data.frame(sep2,P,R)
 out[,2]=as.integer(out[,2])
 out[,3]=as.integer(out[,3])
 write.table(out,"result/fourteenth.csv",row.names=FALSE,sep=",",dec=".",col.names=FALSE,quote=FALSE)
+
+
+######第15次提交，试着考虑假期特征
+Tot=ddply(user_balance,.(report_date),function(D){
+        colwise(sum)(D[,c(-1,-2)])
+        
+})
+
+###假期特征
+jiaqitemp=c("2013-09-19","2013-09-20","2013-09-21","2013-10-01","2013-10-02","2013-10-03","2013-10-04","2013-10-05",
+        "2013-10-06","2013-10-07","2014-01-01","2014-01-31","2014-02-01","2014-02-02","2014-02-03","2014-02-04",
+        "2014-02-05","2014-02-06","2014-04-05","2014-04-06","2014-04-07","2014-05-01","2014-05-02","2014-05-03",
+        "2014-05-31","2014-06-01","2014-06-02","2014-09-06","2014-09-07","2014-09-08")
+jiaqitemp=as.Date(jiaqitemp)
+
+jiaqi=Tot$report_date %in% temp+0
+
+Tot=Tot[225:427,]
+jiaqi=jiaqi[225:427]
+#jiaqi=as.factor(jiaqi)
+
+total_Pred=rep(0,17*30)
+dim(total_Pred)=c(30,17)
+for(i in 2:17){
+        sx=ts(Tot[,i],frequency=7,start=c(1,1))
+        myStlm=stlm(sx,s.window="periodic",robust=TRUE)
+        myPred=forecast.stlm(myStlm,h=30)
+        total_Pred[,i]=myPred$mean
+}
+total_Pred=as.data.frame(total_Pred)
+names(total_Pred)=names(Tot)
+
+temp=as.Date("20140901",format="%Y%m%d")
+sep=temp+0:29
+sep2=format(sep,format="%Y%m%d")
+
+P=total_Pred$purchase_bal_amt+total_Pred$purchase_bank_amt+total_Pred$share_amt
+R=total_Pred$tftobal_amt+total_Pred$tftocard_amt+total_Pred$category1+total_Pred$category2+total_Pred$category3+total_Pred$category4
+
+out=data.frame(sep2,P,R)
+out[,2]=as.integer(out[,2])
+out[,3]=as.integer(out[,3])
+out[6,-1]=out[6,-1]*0.9
+
+write.table(out,"result/fifteenth.csv",row.names=FALSE,sep=",",dec=".",col.names=FALSE,quote=FALSE)
