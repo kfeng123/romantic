@@ -349,8 +349,56 @@ P=total_Pred$purchase_bal_amt+total_Pred$purchase_bank_amt+total_Pred$share_amt
 R=total_Pred$tftobal_amt+total_Pred$tftocard_amt+total_Pred$category1+total_Pred$category2+total_Pred$category3+total_Pred$category4
 
 out=data.frame(sep2,P,R)
+out[6,-1]=out[6,-1]*0.9
 out[,2]=as.integer(out[,2])
 out[,3]=as.integer(out[,3])
-out[6,-1]=out[6,-1]*0.9
+
 
 write.table(out,"result/fifteenth.csv",row.names=FALSE,sep=",",dec=".",col.names=FALSE,quote=FALSE)
+
+
+
+##############第16次，状态依然不是很好。。。玩了一天了-----结果昨天没有提交，今天继续，fighting！！
+Tot=ddply(user_balance,.(report_date),function(D){
+        colwise(sum)(D[,c(-1,-2)])
+})
+
+###用户都是在哪天加入的
+totalDate=unique(user_balance$report_date)
+jiaru=data.frame(totalDate,num=0)
+
+temp=ddply(user_balance,.(user_id),function(D){
+        D$report_date[1]
+        
+})
+plot(table(temp[,2]))
+
+
+
+ArimaFit=arima(Tot$total_purchase_amt,order=c(1,1,1),seasonal=list(order=c(1,1,0),period=7),method="CSS-ML")
+plot(ArimaFit)
+plot(predict(ArimaFit,n.ahead=30)$pred)
+
+
+
+
+head(Tot)
+plot(diff(log(Tot$total_purchase_amt),lag=7),type="l")
+acf(Tot$total_purchase_amt)
+acf(diff(Tot$total_purchase_amt,lag=7))
+
+tempModel=arima(ts(Tot$total_purchase_amt,frequency=7,start=c(1,1)),order=c(1,0,0),seasonal=list(order=c(2,1,0),period=7))
+tempModel
+plot(rstandard(tempModel))
+plot(tempModel,type="l")
+acf(rstandard(tempModel))
+tsdiag(tempModel)
+hist(rstandard(tempModel),50)
+qqnorm(rstandard(tempModel))
+qqline(rstandard(tempModel))
+
+
+plot(forecast(tempModel,h=30))
+
+##自动拟合试试看
+tempModel=auto.arima(ts(Tot$total_purchase_amt,frequency=7,start=c(1,1)),seasonal=TRUE)
