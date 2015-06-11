@@ -324,7 +324,10 @@ jiaqitemp=c("2013-09-19","2013-09-20","2013-09-21","2013-10-01","2013-10-02","20
         "2014-05-31","2014-06-01","2014-06-02","2014-09-06","2014-09-07","2014-09-08")
 jiaqitemp=as.Date(jiaqitemp)
 
-jiaqi=Tot$report_date %in% temp+0
+jiaqi=Tot$report_date %in% jiaqitemp+0
+
+
+
 
 Tot=Tot[225:427,]
 jiaqi=jiaqi[225:427]
@@ -362,6 +365,21 @@ write.table(out,"result/fifteenth.csv",row.names=FALSE,sep=",",dec=".",col.names
 Tot=ddply(user_balance,.(report_date),function(D){
         colwise(sum)(D[,c(-1,-2)])
 })
+###假期特征
+jiaqitemp=c("2013-09-19","2013-09-20","2013-09-21","2013-10-01","2013-10-02","2013-10-03","2013-10-04","2013-10-05",
+            "2013-10-06","2013-10-07","2014-01-01","2014-01-31","2014-02-01","2014-02-02","2014-02-03","2014-02-04",
+            "2014-02-05","2014-02-06","2014-04-05","2014-04-06","2014-04-07","2014-05-01","2014-05-02","2014-05-03",
+            "2014-05-31","2014-06-01","2014-06-02","2014-09-06","2014-09-07","2014-09-08")
+jiaqitemp=as.Date(jiaqitemp)
+
+jiaqi=Tot$report_date %in% jiaqitemp+0
+temp=as.Date("20140901",format="%Y%m%d")
+sep=temp+0:29
+yuceJiaqi=sep %in% jiaqitemp+0
+
+buxiutemp=c("2013-09-22","2013-09-29","2013-10-12","2014-01-26","2014-02-08","2014-05-04","2014-09-28")
+buxiutemp=as.Date(buxiutemp)
+buxiu=Tot$report_date %in% buxiutemp+0
 
 ###用户都是在哪天加入的
 totalDate=unique(user_balance$report_date)
@@ -371,15 +389,165 @@ temp=ddply(user_balance,.(user_id),function(D){
         D$report_date[1]
         
 })
-plot(table(temp[,2]))
+#############################
+
+temp=weekdays(Tot$report_date)%in%c("星期六","星期日")+0
+
+#redeem的方式：tftobal_amt、tftocard_amt、category1、category2、category3、category4
+plot((Tot$total_redeem_amt)[200:427],type="l")
+points((Tot$total_redeem_amt*temp)[200:427],type="p")
+points((Tot$total_redeem_amt*jiaqi)[200:427],type="p",col="red")
+points((Tot$total_redeem_amt*buxiu)[200:427],type="p",col="green")
+
+#这个对节假日更敏感一些
+plot((Tot$tftobal_amt)[200:427],type="l")
+points((Tot$tftobal_amt*temp)[200:427],type="p")
+points((Tot$tftobal_amt*jiaqi)[200:427],type="p",col="red")
+points((Tot$tftobal_amt*buxiu)[200:427],type="p",col="green")
+sx=ts(Tot$tftobal_amt,frequency=7,start=c(1,1))
+autoFit=auto.arima(sx,d=1,D=1,trace=TRUE)
+#ARIMA(2,1,2)(0,1,1)
+plot(forecast(autoFit,h=30))
+tftobal_amt=as.numeric(forecast(autoFit,h=30)$mean)
+detectAO(autoFit)
+detectIO(autoFit)
 
 
 
-ArimaFit=arima(Tot$total_purchase_amt,order=c(1,1,1),seasonal=list(order=c(1,1,0),period=7),method="CSS-ML")
+plot((Tot$tftocard_amt)[200:427],type="l")
+points((Tot$tftocard_amt*temp)[200:427],type="p")
+points((Tot$tftocard_amt*jiaqi)[200:427],type="p",col="red")
+points((Tot$tftocard_amt*buxiu)[200:427],type="p",col="green")
+sx=ts(Tot$tftocard_amt,frequency=7,start=c(1,1))
+autoFit=auto.arima(sx,d=1,D=1,trace=TRUE)
+#ARIMA(1,0,2)(0,1,1)
+plot(forecast(autoFit,h=30)$residuals)
+tftocard_amt=as.numeric(forecast(autoFit,h=30)$mean)
+
+
+
+
+plot((Tot$category1)[200:427],type="l")
+points((Tot$category1*temp)[200:427],type="p")
+points((Tot$category1*jiaqi)[200:427],type="p",col="red")
+points((Tot$category1*buxiu)[200:427],type="p",col="green")
+sx=ts(Tot$category1,frequency=7,start=c(1,1))
+autoFit=auto.arima(sx,d=0,D=1,trace=TRUE)
+#ARIMA(1,0,1)(0,1,2)
+plot(forecast(autoFit,h=30)$residuals)
+category1=as.numeric(forecast(autoFit,h=30)$mean)
+
+
+
+
+plot((Tot$category2)[200:427],type="l")
+points((Tot$category2*temp)[200:427],type="p")
+points((Tot$category2*jiaqi)[200:427],type="p",col="red")
+points((Tot$category2*buxiu)[200:427],type="p",col="green")
+sx=ts(Tot$category2,frequency=7,start=c(1,1))
+autoFit=auto.arima(sx,d=1,D=1,trace=TRUE)
+#ARIMA(2,1,1)(2,1,2)
+plot(forecast(autoFit,h=30)$residuals)
+category2=as.numeric(forecast(autoFit,h=30)$mean)
+
+
+
+plot((Tot$category3)[200:427],type="l")
+points((Tot$category3*temp)[200:427],type="p")
+points((Tot$category3*jiaqi)[200:427],type="p",col="red")
+points((Tot$category3*buxiu)[200:427],type="p",col="green")
+sx=ts(Tot$category3,frequency=7,start=c(1,1))
+autoFit=auto.arima(sx,d=1,D=1,trace=TRUE)
+#ARIMA(5,1,0)(2,1,1)
+plot(forecast(autoFit,h=30)$residuals)
+category3=as.numeric(forecast(autoFit,h=30)$mean)
+
+
+plot((Tot$category4)[200:427],type="l")
+points((Tot$category4*temp)[200:427],type="p")
+points((Tot$category4*jiaqi)[200:427],type="p",col="red")
+points((Tot$category4*buxiu)[200:427],type="p",col="green")
+sx=ts(Tot$category4,frequency=7,start=c(1,1))
+autoFit=auto.arima(sx,d=1,D=1,trace=TRUE)
+#ARIMA(0,1,1)(2,1,0)
+plot(forecast(autoFit,h=30)$residuals)
+category4=as.numeric(forecast(autoFit,h=30)$mean)
+
+
+
+############################
+##purchase_bal_amt、purchase_bank_amt、share_amt
+
+
+plot((Tot$purchase_bal_amt)[200:427],type="l")
+points((Tot$purchase_bal_amt*temp)[200:427],type="p")
+points((Tot$purchase_bal_amt*jiaqi)[200:427],type="p",col="red")
+points((Tot$purchase_bal_amt*buxiu)[200:427],type="p",col="green")
+sx=ts(Tot$purchase_bal_amt,frequency=7,start=c(1,1))
+autoFit=auto.arima(sx,d=0,D=1,trace=TRUE)
+#ARIMA(2,0,2)(0,1,2)
+plot(forecast(autoFit,h=30))
+purchase_bal_amt=as.numeric(forecast(autoFit,h=30)$mean)
+
+
+plot((Tot$purchase_bank_amt)[200:427],type="l")
+points((Tot$purchase_bank_amt*temp)[200:427],type="p")
+points((Tot$purchase_bank_amt*jiaqi)[200:427],type="p",col="red")
+points((Tot$purchase_bank_amt*buxiu)[200:427],type="p",col="green")
+sx=ts(Tot$purchase_bank_amt,frequency=7,start=c(1,1))
+autoFit=auto.arima(sx,d=0,D=1,trace=TRUE)
+#ARIMA(2,0,1)(0,1,1)
+plot(forecast(autoFit,h=30))
+purchase_bank_amt=as.numeric(forecast(autoFit,h=30)$mean)
+
+
+
+plot((Tot$share_amt)[200:427],type="l")
+points((Tot$share_amt*temp)[200:427],type="p")
+points((Tot$share_amt*jiaqi)[200:427],type="p",col="red")
+points((Tot$share_amt*buxiu)[200:427],type="p",col="green")
+sx=ts(Tot$share_amt,frequency=7,start=c(1,1))
+autoFit=auto.arima(sx,d=0,D=1,trace=TRUE)
+#ARIMA(2,0,1)(2,1,0)
+plot(forecast(autoFit,h=30))
+share_amt=as.numeric(forecast(autoFit,h=30)$mean)
+
+P=purchase_bal_amt+purchase_bank_amt+share_amt
+R=tftobal_amt+tftocard_amt+category1+category2+category3+category4
+
+
+temp=as.Date("20140901",format="%Y%m%d")
+sep=temp+0:29
+sep2=format(sep,format="%Y%m%d")
+
+out=data.frame(sep2,P,R)
+out[6,-1]=out[6,-1]*0.9
+out[,2]=as.integer(out[,2])
+out[,3]=as.integer(out[,3])
+
+
+write.table(out,"result/sixteenth.csv",row.names=FALSE,sep=",",dec=".",col.names=FALSE,quote=FALSE)
+
+############################
+
+
+ArimaFit=arima(Tot$total_purchase_amt,order=c(1,1,1),seasonal=list(order=c(1,1,0),period=7),method="ML")
 plot(ArimaFit)
 plot(predict(ArimaFit,n.ahead=30)$pred)
 
 
+ArimaFit=arima(Tot$total_redeem_amt,order=c(1,0,1),seasonal=list(order=c(0,1,1),period=7),method="ML")
+ArimaFit
+plot(ArimaFit)
+plot(predict(ArimaFit,n.ahead=30)$pred)
+
+sx=ts(Tot$total_redeem_amt,frequency=7,start=c(1,1))
+autoFit=auto.arima(sx,d=0,D=1,trace=TRUE)
+plot(forecast(autoFit,h=30))
+
+sx=ts(Tot$total_purchase_amt,frequency=7,start=c(1,1))
+autoFit=auto.arima(sx,d=0,D=1,trace=TRUE)
+plot(forecast(autoFit,h=30))
 
 
 head(Tot)
@@ -402,3 +570,7 @@ plot(forecast(tempModel,h=30))
 
 ##自动拟合试试看
 tempModel=auto.arima(ts(Tot$total_purchase_amt,frequency=7,start=c(1,1)),seasonal=TRUE)
+
+
+
+

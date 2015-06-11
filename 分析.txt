@@ -21,11 +21,10 @@
 
 ！！！波动率的估计
 
-！！！申购与赎回作为二元时间序列
+！！！！！！！！！！！申购与赎回作为二元时间序列
 
 #####！！！！！！！！！去学习exponential smoothing
 
-!!!!!!挖掘每个用户有多少天在玩
 
 ！！！！！！！！！！月是不是一个季节项？
 
@@ -66,6 +65,34 @@ stats::arima
 
 书看到了266页
 
+the time series is only affected at time T if it has an additive outlier at T
+
+an innovative outlier at T perturbs all observations on and after T
+
+
+新闻对流量的影响程度
+
+See Chang et al. (1988) for another approach to classifying the nature of an outlier
+
+When an outlier is found, it can be incorporated into the model, and the outlier-detection procedure can then be repeated with the refined model until no more outliers are found.
+
+
+
+
+
+
+对tftobal_amt建模遇到了问题，如果指定d=1,D=1那么趋势是向下的，如果指定d=0,D=1,那么趋势是向上的，差别特别大
+
+?detectAO
+?detectIO
+
+
+
+用kmeans对用户的聚类还是比较理想的，但是超级土豪还需要手动给筛出来
+
+
+
+
 
 
 第一次提交：用300:427的数据，按照星期做一个平均，分数114.11
@@ -82,4 +109,5 @@ stats::arima
 第12次提交：把每天的量除以每天的用户数再做，其余和第8次一样，113.48
 第13次提交：和第10次差不多，只是做了log变换后又差分了一下，82.99
 第14次提交：和第11次差不多，只不过有的没做log变换，另外用stlm做的,117.49
-第15次提交：把第八次，然后把中秋节的量乘以0.9了，这是过拟合啊啊啊啊。。。
+第15次提交：把第八次，然后把中秋节的量乘以0.9了，这是过拟合啊啊啊啊。。。120.30
+第16次提交：推倒前面的，用arima模型来重新做，111.85
