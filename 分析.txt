@@ -92,7 +92,7 @@ When an outlier is found, it can be incorporated into the model, and the outlier
 
 
 
-
+考虑outlier时间点时哪些用户的贡献大，这些是异常用户
 
 
 第一次提交：用300:427的数据，按照星期做一个平均，分数114.11
@@ -111,3 +111,6 @@ When an outlier is found, it can be incorporated into the model, and the outlier
 第14次提交：和第11次差不多，只不过有的没做log变换，另外用stlm做的,117.49
 第15次提交：把第八次，然后把中秋节的量乘以0.9了，这是过拟合啊啊啊啊。。。120.30
 第16次提交：推倒前面的，用arima模型来重新做，111.85
+第17次提交：用arima模型，用kmeans聚类成大土豪和屌丝，而且对8号和28号进行了修正，分数：107.73
+第18次提交：用所有数据，airma模型，对8号和28号修正，分数：115.40
+第19次提交：普通天用第八次，8号和18号用第18次的结果，分数：125.76
