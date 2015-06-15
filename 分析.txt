@@ -95,6 +95,19 @@ When an outlier is found, it can be incorporated into the model, and the outlier
 考虑outlier时间点时哪些用户的贡献大，这些是异常用户
 
 
+
+暴力循环得到哪些变量或者哪些用户放到一起MAE最小
+
+
+ARIMA模型参数的估计：
+对AR部分，CSS方法和矩估计是基本上一样的，yule walker方程。MA部分，是用迭代的
+
+
+svd
+
+stl+arima
+
+
 第一次提交：用300:427的数据，按照星期做一个平均，分数114.11
 第二次提交：用351:427的数据，用STL分解、forecast函数来做，分数112.18
 第三次提交：用351:427的数据，用STL分解、forecast函数来做，分男女，分数114.49

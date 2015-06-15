@@ -325,3 +325,60 @@ out[28,]=temp1[28,]
 write.table(out,"result/nighteenth.csv",row.names=FALSE,sep=",",dec=".",col.names=FALSE,quote=FALSE)
 
 
+
+##########第20次提交,加油！！！！
+
+#####分析用户
+temp=apply(user_balance[,c(-1,-2)],MARGIN=1,FUN=sum)
+user_balance=user_balance[temp!=0,]
+
+##去掉share的user_balance
+noshare_user_balance=user_balance[user_balance$direct_purchase_amt!=0|user_balance$total_redeem_amt!=0,]
+
+user_long=ddply(noshare_user_balance,.(user_id),function(temp){
+        temp2=data.frame(start=min(temp$report_date),end=max(temp$report_date),times=nrow(temp),
+                         max_purchase=max(temp$direct_purchase_amt),
+                         max_redeem=max(temp$total_redeem_amt),
+                         mean_purchase=mean(temp$direct_purchase_amt),
+                         mean_redeem=mean(temp$total_redeem_amt),
+                         weekend_number=sum(weekdays(temp$report_date)%in%c("星期六","星期日")+0)/as.integer(max(temp$report_date)-min(temp$report_date)+1)
+        )
+        return(temp2)
+})
+colwise(mean)(user_long[,c(-1,-2,-3)])
+set.seed(1)
+myKmeans=kmeans(user_long[,c(-1,-2,-3)],centers=2)
+cluster_1=user_long$user_id[myKmeans$cluster==1]
+cluster_2=user_long$user_id[myKmeans$cluster==2]
+#########################################
+
+
+myTot=ddply(noshare_user_balance,.(report_date),function(D){
+        colwise(sum)(D[,c(-1,-2)])
+})
+
+#############假期特征
+jiaqitemp=c("2013-09-19","2013-09-20","2013-09-21","2013-10-01","2013-10-02","2013-10-03","2013-10-04","2013-10-05",
+            "2013-10-06","2013-10-07","2014-01-01","2014-01-31","2014-02-01","2014-02-02","2014-02-03","2014-02-04",
+            "2014-02-05","2014-02-06","2014-04-05","2014-04-06","2014-04-07","2014-05-01","2014-05-02","2014-05-03",
+            "2014-05-31","2014-06-01","2014-06-02","2014-09-06","2014-09-07","2014-09-08")
+jiaqitemp=as.Date(jiaqitemp)
+
+jiaqi=myTot$report_date %in% jiaqitemp+0
+temp=as.Date("20140901",format="%Y%m%d")
+sep=temp+0:29
+yuceJiaqi=sep %in% jiaqitemp+0
+
+buxiutemp=c("2013-09-22","2013-09-29","2013-10-12","2014-01-26","2014-02-08","2014-05-04","2014-09-28")
+buxiutemp=as.Date(buxiutemp)
+buxiu=myTot$report_date %in% buxiutemp+0
+#########################
+
+sx=ts(myTot$total_redeem_amt,frequency=7,start=c(1,1))
+temp=ts(myTot$total_redeem_amt[300:427],frequency=7,start=c(1,1))
+autoFit=auto.arima(temp^2,d=1,D=1,trace=TRUE)
+#ARIMA(1,0,2)(0,1,2)
+tsdiag(autoFit)
+
+stats::arima(sx,order=c(2,0,2),seasonal=list(order=c(0,1,2),period=7),xreg=jiaqi)
+      
