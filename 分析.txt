@@ -1,14 +1,5 @@
 !!!!!!!!!!!!In words, if the standard deviation of the series is proportional to the level of the series,then transforming to logarithms will produce a series with approximately constant variance over time.(TSA P98)
 
-
-申购赎回走势
-
-有效用户数量趋势，就是存款大于100元的
-
-
-
-分男女
-
 申购赎回与其他特征的关系：先判别再回归
 
 识别不活跃用户
@@ -23,14 +14,7 @@
 
 ！！！！！！！！！！！申购与赎回作为二元时间序列
 
-#####！！！！！！！！！去学习exponential smoothing
-
-
 ！！！！！！！！！！月是不是一个季节项？
-
-!!!!!!!!!!!!!!分新用户和老用户预测
-
-！！！！！！！！！！！取对数再重新做
 
 !!!!!!!!稳健回归
 
@@ -53,32 +37,15 @@
 
 ！！！！！！！！！！?seasonaldummy
 
-!!!!!!!!!!!!!!!!用2013年建模，预测2014年
-
-!!!!!!!!!!!!!!!看arima的源代码
-
-tsa::arima
-
-stats::arima
-
-?arimax
-
-书看到了266页
 
 the time series is only affected at time T if it has an additive outlier at T
 
 an innovative outlier at T perturbs all observations on and after T
 
 
-新闻对流量的影响程度
-
 See Chang et al. (1988) for another approach to classifying the nature of an outlier
 
 When an outlier is found, it can be incorporated into the model, and the outlier-detection procedure can then be repeated with the refined model until no more outliers are found.
-
-
-
-
 
 
 对tftobal_amt建模遇到了问题，如果指定d=1,D=1那么趋势是向下的，如果指定d=0,D=1,那么趋势是向上的，差别特别大
@@ -97,15 +64,22 @@ When an outlier is found, it can be incorporated into the model, and the outlier
 
 
 暴力循环得到哪些变量或者哪些用户放到一起MAE最小
+svd
 
 
 ARIMA模型参数的估计：
 对AR部分，CSS方法和矩估计是基本上一样的，yule walker方程。MA部分，是用迭代的
 
-
-svd
-
 stl+arima
+
+季节性的幅度是在变化的
+
+自己的回归基础太差了
+
+数据集AirPassengers挺像的
+
+复鹰(693545461) 16:43:10 
+其实我就是把总Purchase和Redeem的时间序列当成一个信号，然后既然是信号就有大尺度衰落和小尺度衰落
 
 
 第一次提交：用300:427的数据，按照星期做一个平均，分数114.11
@@ -127,3 +101,5 @@ stl+arima
 第17次提交：用arima模型，用kmeans聚类成大土豪和屌丝，而且对8号和28号进行了修正，分数：107.73
 第18次提交：用所有数据，airma模型，对8号和28号修正，分数：115.40
 第19次提交：普通天用第八次，8号和18号用第18次的结果，分数：125.76
+第20次提交：第8天比第19次提交的保守了些，结果不好了：123.63
+第21次提交：用244:427的数据，用STL去季节项，然后用简单线性回归学习残差，分数：120.06

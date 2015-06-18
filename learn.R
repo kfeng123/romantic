@@ -139,3 +139,24 @@ plot((residuals(m2)-mean(residuals(m2)))/sd(residuals(m2)),type="b")
 plot(residuals(m2),type="b")
 
 
+install.packages("perARMA")
+library(perARMA)
+
+install.packages("seas")
+library(seas)
+library(help="seas")
+
+install.packages("tpr")
+library(tpr)
+library(help="tpr")
+
+install.packages("dynlm")
+library(dynlm)
+
+data("AirPassengers", package = "datasets")
+ap <- log(AirPassengers)
+ap_fm <- dynlm(ap ~ trend(ap) + season(ap))
+summary(ap_fm)
+plot(AirPassengers)
+plot(ap_fm$residuals)
+plot(predict(ap_fm))
