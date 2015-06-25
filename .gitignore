@@ -15,3 +15,4 @@ vignettes/*.pdf
 
 # 忽略data文件夹
 /data/*
+/newData/*

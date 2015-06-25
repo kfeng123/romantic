@@ -1,4 +1,4 @@
-setwd("C:/Users/ThinkCentre/Desktop/romantic")
+
 library(caret)
 library(plyr)
 library(forecast)
@@ -153,7 +153,6 @@ head(mystl$time.series)
 head(mystl$weights)
 temp=tsPurchase-mystl$time.series[,1]
 
-?forecast
 plot(forecast(mystl,h=30))
 plot(as.vector(forecast(mystl,h=30)$mean),type="l")
 lines(out[,2],type="l")
@@ -314,7 +313,7 @@ Tot$report_date[213]
 ###先去调收益的影响，再拟合时间序列
 Tot=Tot[225:427,]
 interest=interest[225:427,]
-
+interest$mfd_date=as.Date(as.character(interest$mfd_date),format="%Y%m%d")
 yieldAndTot=merge(interest,Tot,by.x="mfd_date",by.y="report_date")
 tsPurchase=ts(Tot$total_purchase_amt,frequency=7,start=c(1,7))
 purchaseStl=stl(tsPurchase,s.window="periodic",robust)
