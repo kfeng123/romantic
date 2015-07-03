@@ -59,9 +59,6 @@ redeem[28]=redeem[28]+buxiuBias
 
 dataname=data.frame(purchase)
 dataname$report_date=dataset2$report_date
-
-
-
 dataname$redeem=redeem
 
 # 用户指定数据变量dataname(class:data.frame)到输出端口

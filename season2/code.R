@@ -1,3 +1,5 @@
+
+
 # 请链接输入数据
 # 链接完成后，系统会自动生成映射代码，将输入数据映射成变量参数，用户可直接使用
 # 切记不可修改系统生成代码，否则运行将报错
@@ -25,7 +27,7 @@ buxiutemp=c("2013-09-22","2013-09-29","2013-10-12","2014-01-26","2014-02-08","20
 buxiutemp=as.Date(buxiutemp)
 buxiu=dataset1$report_date %in% buxiutemp+0
 #########################
-temp=weekdays(dataset1$report_date)%in%c("星期六","星期日")+0
+temp=dataset1$saturday+dataset1$sunday
 
 sx=ts(dataset1$total_purchase_amt,frequency=7,start=c(1,1))
 autoFit=auto.arima(sx,d=0,D=1,trace=TRUE)
@@ -59,12 +61,13 @@ redeem[28]=redeem[28]+buxiuBias
 
 dataname=data.frame(purchase)
 dataname$report_date=dataset2$report_date
-
-
-
 dataname$redeem=redeem
 
 # 用户指定数据变量dataname(class:data.frame)到输出端口
 # 平台会将该数据生成ODPS表
 # dataname务必修改成自己的变量名称
 pai.outputPort(1, dataname)
+
+
+
+
