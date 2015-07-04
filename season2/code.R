@@ -86,12 +86,12 @@ dataset1 <- pai.inputPort(1) # class: data.frame
 
 formulaStr="total_purchase_amt~monday+tuesday+wednesday+thursday+friday+saturday"
 lmFit=lm(as.formula(formulaStr),dataset1)
-purchase=predict(lmFit,datase2)
+purchase=predict(lmFit,dataset2)
 
 
 formulaStr="total_redeem_amt~monday+tuesday+wednesday+thursday+friday+saturday"
 lmFit=lm(as.formula(formulaStr),dataset1)
-redeem=predict(lmFit,datase2)
+redeem=predict(lmFit,dataset2)
 
 
 
