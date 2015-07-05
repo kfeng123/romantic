@@ -110,5 +110,47 @@ pai.outputPort(1, dataname)
 
 
 
+########7月5日
+
+
+
+# 请链接输入数据
+# 链接完成后，系统会自动生成映射代码，将输入数据映射成变量参数，用户可直接使用
+# 切记不可修改系统生成代码，否则运行将报错
+# 端口2的表数据映射成dataset2
+dataset2 <- pai.inputPort(2) # class: data.frame
+# 端口1的表数据映射成dataset1
+dataset1 <- pai.inputPort(1) # class: data.frame
+
+formulaStr="total_purchase_amt~monday+tuesday+wednesday+thursday+friday+saturday"
+lmFit=lm(as.formula(formulaStr),dataset1)
+purchase=predict(lmFit,dataset2)
+
+
+formulaStr="total_redeem_amt~monday+tuesday+wednesday+thursday+friday+saturday"
+lmFit=lm(as.formula(formulaStr),dataset1)
+redeem=predict(lmFit,dataset2)
+
+
+
+
+dataname=data.frame(purchase)
+dataname$report_date=dataset2$report_date
+dataname$redeem=redeem
+
+dataname$purchase[8]=480000000
+dataname$redeem[8]=600000000
+
+dataname$purchase[28]=865500630
+dataname$redeem[28]=955642120
+
+
+# 用户指定数据变量dataname(class:data.frame)到输出端口
+# 平台会将该数据生成ODPS表
+# dataname务必修改成自己的变量名称
+pai.outputPort(1, dataname)
+
+
+
 
 

@@ -1,0 +1,6 @@
+R2=read.csv("7_2.csv",header=FALSE)
+R3=read.csv("7_3.csv",header=FALSE)
+R4=read.csv("7_4.csv",header=FALSE)
+plot(R2[,3],type="l")
+lines(R3[,3],type="l",col="red")
+lines(R4[,3],type="l",col="blue")
