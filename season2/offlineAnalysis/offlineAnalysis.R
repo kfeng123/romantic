@@ -34,11 +34,10 @@ points((myTot$purchase*jiaqi),type="p",col="red")
 points((myTot$purchase*buxiu),type="p",col="green")
 
 sx=ts(myTot$purchase,frequency=7,start=c(1,1))
-autoFit=auto.arima(sx,d=0,D=1,trace=TRUE)
-#ARIMA(1,0,0)(0,1,2)
-plot(forecast(autoFit,h=30)$residual)
-points((forecast(autoFit,h=30)$residual*jiaqi*(1-temp)),type="p")
-points(forecast(autoFit,h=30)$residual*jiaqi*temp,type="p",col="blue")
-
-points(forecast(autoFit,h=30)$residual*buxiu,type="p",col="red")
-
+#autoFit=auto.arima(sx,d=0,D=1,trace=TRUE)
+#plot(forecast(autoFit,h=30)$residual)
+##points((forecast(autoFit,h=30)$residual*jiaqi*(1-zhoumo)),type="p")
+#points(forecast(autoFit,h=30)$residual*jiaqi*zhoumo,type="p",col="blue")
+#points(forecast(autoFit,h=30)$residual*buxiu,type="p",col="red")
+myStl=stl(sx,s.window="periodic",robust=TRUE)
+plot(forecast(myStl,h=30))
