@@ -356,7 +356,9 @@ dataname$redeem[28]=955642120
 dataname$purchase[30]=900000000
 dataname$redeem[30]=900000000
 
-
+for (i in c(4,11,18,25)){
+	dataname$purchase[i]=874634149
+}
 
 # 用户指定数据变量dataname(class:data.frame)到输出端口
 # 平台会将该数据生成ODPS表

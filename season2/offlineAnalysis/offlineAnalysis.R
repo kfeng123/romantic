@@ -28,7 +28,7 @@ zhoumo=as.numeric(xingqi%in%c("0","6"))
 #########################
 
 
-plot(1:150,myTot$purchase[1:150],type="l")
+plot(1:427,myTot$purchase[1:427],type="l")
 temp=(strftime(myTot$report_date,format="%d")=="01")
 temp2=(1:427)[temp]
 abline(v=temp2)
