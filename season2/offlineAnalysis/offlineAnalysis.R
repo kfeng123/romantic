@@ -27,11 +27,18 @@ xingqi=strftime(myTot$report_date,format="%w")
 zhoumo=as.numeric(xingqi%in%c("0","6"))
 #########################
 
-plot(myTot$purchase,type="l")
-points((myTot$purchase*zhoumo),type="p")
-#points((myTot$total_redeem_amt*((myTot$report_date=="2013-11-11")*1)),type="p",col="red")
-points((myTot$purchase*jiaqi),type="p",col="red")
-points((myTot$purchase*buxiu),type="p",col="green")
+
+plot(1:150,myTot$purchase[1:150],type="l")
+temp=(strftime(myTot$report_date,format="%d")=="01")
+temp2=(1:427)[temp]
+abline(v=temp2)
+points(1:427,(myTot$purchase*zhoumo),type="p")
+points(1:427,(myTot$purchase*jiaqi),type="p",col="red")
+points(1:427,(myTot$purchase*buxiu),type="p",col="green")       
+
+
+
+
 
 sx=ts(myTot$purchase,frequency=7,start=c(1,1))
 #autoFit=auto.arima(sx,d=0,D=1,trace=TRUE)
@@ -41,3 +48,23 @@ sx=ts(myTot$purchase,frequency=7,start=c(1,1))
 #points(forecast(autoFit,h=30)$residual*buxiu,type="p",col="red")
 myStl=stl(sx,s.window="periodic",robust=TRUE)
 plot(forecast(myStl,h=30)$mean)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
