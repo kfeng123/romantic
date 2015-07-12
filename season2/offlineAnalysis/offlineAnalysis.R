@@ -30,18 +30,27 @@ zhoumo=as.numeric(xingqi%in%c("0","6"))
 #月初，每月1号
 yuechu=(strftime(myTot$report_date,format="%d")=="01")+0
 #########################
+par(mfrow=c(2,1))
 
-
-plot(1:427,myTot$purchase[1:427],type="l")
+plot(1:427,myTot$redeem[1:427],type="l")
 temp=(strftime(myTot$report_date,format="%d")=="01")
 temp2=(1:427)[temp]
 abline(v=temp2)
-points(1:427,(myTot$purchase*zhoumo),type="p")
-points(1:427,(myTot$purchase*jiaqi),type="p",col="red")
-points(1:427,(myTot$purchase*buxiu),type="p",col="green")       
+points(1:427,(myTot$redeem*zhoumo),type="p")
+points(1:427,(myTot$redeem*jiaqi),type="p",col="red")
+points(1:427,(myTot$redeem*buxiu),type="p",col="green")       
 
 
-sx=ts(myTot$purchase,frequency=7,start=c(1,1))
+##redeem人数
+redeemNum=read.csv("redeemNum.csv",header=FALSE)
+plot(275:427,redeemNum[275:427,2],type="l")
+abline(v=temp2)
+points(1:427,(redeemNum[1:427,2]*zhoumo),type="p")
+points(1:427,(redeemNum[1:427,2]*jiaqi),type="p",col="red")
+points(1:427,(redeemNum[1:427,2]*buxiu),type="p",col="green")       
+
+
+sx=ts(myTot$redeem,frequency=7,start=c(1,1))
 
 xingqi=NULL
 for(i in 1:7){
@@ -87,3 +96,34 @@ Pseason=seasonaldummy(temp)
 
 toP=data.frame(Pseason,yuechu=(1:30%in%1) +0,jiaqi=(1:30%in%8) +0,buxiu=(1:30%in%28) +0)
 plot(predict(lmFit,toP),type="o")
+
+
+tuhao=read.csv("tuhao.csv",header=FALSE)
+tuhao=tuhao[,c(2,9)]
+names(tuhao)=c("report_date","redeem")
+tuhao$report_date=as.Date(as.character(tuhao$report_date),format="%Y%m%d")
+a=rep(0,427-275+1)
+for (i in 1:length(tuhao$report_date)){
+        temp=as.integer(tuhao$report_date[i]-as.Date("20140401",format="%Y%m%d")+1)
+        a[temp]=a[temp]+tuhao$redeem[i]
+}
+plot(275:427,myTot$redeem[275:427]-a,type="l")       
+
+plot(myTot$redeem/redeemNum[,2],type="l")
+
+
+
+
+
+dayu20k=read.csv("dayu20k.csv",header=FALSE)
+plot(dayu20k[,2],type="l")
+plot(myTot$redeem[275:427]-dayu20k[,2],type="l")
+plot(myTot$redeem[275:427],type="l")
+
+
+
+(myTot$redeem[279]+myTot$redeem[335])/2
+(myTot$redeem[280]+myTot$redeem[336])/2
+(myTot$redeem[281]+myTot$redeem[337])/2
+
+
