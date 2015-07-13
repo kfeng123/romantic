@@ -1,5 +1,4 @@
 library("forecast")
-library("moments")
 myTot=read.csv("myTot.csv",header=FALSE)
 myTot=myTot[,-4]
 names(myTot)=c("report_date","purchase","redeem")
@@ -30,38 +29,18 @@ zhoumo=as.numeric(xingqi%in%c("0","6"))
 #月初，每月1号
 yuechu=(strftime(myTot$report_date,format="%d")=="01")+0
 #########################
-par(mfrow=c(2,1))
+sx=ts(myTot$redeem,frequency=7,start=c(1,1))
 
-plot(1:427,myTot$redeem[1:427],type="l")
+plot(275:427,myTot$redeem[275:427],type="o")
 temp=(strftime(myTot$report_date,format="%d")=="01")
 temp2=(1:427)[temp]
 abline(v=temp2)
-points(1:427,(myTot$redeem*zhoumo),type="p")
+points(1:427,(myTot$redeem*(cycle(sx)==1 +0)),type="p")
 points(1:427,(myTot$redeem*jiaqi),type="p",col="red")
 points(1:427,(myTot$redeem*buxiu),type="p",col="green")       
 
 
-##redeem人数
-redeemNum=read.csv("redeemNum.csv",header=FALSE)
-plot(275:427,redeemNum[275:427,2],type="l")
-abline(v=temp2)
-points(1:427,(redeemNum[1:427,2]*zhoumo),type="p")
-points(1:427,(redeemNum[1:427,2]*jiaqi),type="p",col="red")
-points(1:427,(redeemNum[1:427,2]*buxiu),type="p",col="green")       
 
-
-sx=ts(myTot$redeem,frequency=7,start=c(1,1))
-
-xingqi=NULL
-for(i in 1:7){
-        xingqi[[i]]=sx[cycle(sx)==i]
-}
-for(i in 1:7){
-        plot(xingqi[[i]],type="o",main=i)
-}
-for(i in 1:7){
-        plot(forecast(auto.arima(xingqi[[i]]),h=30))
-}
 
 
 #研究残差
@@ -74,7 +53,7 @@ temp=seasonaldummy(temp)
 predict(lmFit,data.frame(temp))
 hist(residuals(lmFit))
 hist(residuals(lmFit)/fitted.values(lmFit))
-plot(residuals(lmFit),type="l")
+plot(residuals(lmFit),type="o")
 plot(residuals(lmFit)/fitted.values(lmFit),type="l")
 temp=(strftime(myTot$report_date,format="%d")=="01")
 temp2=(1:427)[temp]
@@ -84,8 +63,8 @@ points((residuals(lmFit)/fitted.values(lmFit)*jiaqi[275:427]),type="p",col="red"
 points((residuals(lmFit)/fitted.values(lmFit)*buxiu[275:427]),type="p",col="green")       
 
 
-
-
+plot(275:427,stl(ts(residuals(lmFit),frequency=7,start=c(1,1)),s.window="period")$time.series[,2],type="l")
+abline(v=temp2)
 
 myD=data.frame(purchase=sx,seasonaldummy(sx),yuechu,jiaqi,buxiu)
 myD=myD[275:427,]
