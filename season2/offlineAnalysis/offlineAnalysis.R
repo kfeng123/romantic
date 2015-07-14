@@ -31,7 +31,7 @@ yuechu=(strftime(myTot$report_date,format="%d")=="01")+0
 #########################
 sx=ts(myTot$purchase,frequency=7,start=c(1,1))
 
-plot(1:427,myTot$purchase[1:427],type="o")
+plot(1:200,myTot$purchase[1:200],type="l")
 temp=(strftime(myTot$report_date,format="%d")=="01")
 temp2=(1:427)[temp]
 abline(v=temp2)
@@ -39,7 +39,7 @@ points(1:427,(myTot$purchase*(cycle(sx)==1 +0)),type="p")
 points(1:427,(myTot$purchase*jiaqi),type="p",col="red")
 points(1:427,(myTot$purchase*buxiu),type="p",col="green")       
 
-head(new_Tot)
+
 new_Tot$purchase=new_Tot$total_purchase_amt
 plot(1:427,new_Tot$purchase[1:427],type="o")
 temp=(strftime(new_Tot$report_date,format="%d")=="01")
@@ -79,14 +79,53 @@ myD$jiaqi6=(1:427 %in% c(279,335))+0
 myD$jiaqi7=(1:427 %in% c(280,336))+0
 myD=myD[275:427,]
 lmFit=lm(purchase~.,myD)
+plot(residuals(lmFit),type="o")
+temp=(strftime(myTot$report_date,format="%d")=="01")
+temp2=(1:427)[temp]
+abline(v=temp2-274)
+points((residuals(lmFit)*zhoumo[275:427]),type="p")
+points((residuals(lmFit)*jiaqi[275:427]),type="p",col="red")
+points((residuals(lmFit)*buxiu[275:427]),type="p",col="green")       
+
+
 temp=ts(1:30,frequency=7,start=c(1,1))
 Pseason=seasonaldummy(temp)
-
 toP=data.frame(Pseason,yuechu=(1:30%in%1) +0,jiaqi6=(1:30%in%6)+0,jiaqi7=(1:30%in%7)+0,jiaqiN=(1:30%in%8) +0,buxiu=(1:30%in%28) +0)
 plot(predict(lmFit,toP),type="o")
 
 
 
+#redeem模型
+sx=ts(myTot$redeem,frequency=7,start=c(1,1))
+myD=data.frame(redeem=sx,seasonaldummy(sx),buxiu)
+myD$jiaqiN=jiaqi*(1-zhoumo)
+myD$jiaqi6=(1:427 %in% c(279,335))+0
+myD$jiaqi7=(1:427 %in% c(280,336))+0
+myD$jihao=as.numeric(format(myTot$report_date,format="%d"))
+#假期前1天特征
+myD$qian1=(1:427 %in% c(278,304,334))+0
+#假期前2天特征
+myD$qian2=(1:427 %in% c(277,303,333))+0
+myD=myD[275:427,]
+lmFit=lm(redeem~.,myD)
+plot(residuals(lmFit),type="o")
+temp=(strftime(myTot$report_date,format="%d")=="01")
+temp2=(1:427)[temp]
+abline(v=temp2-274)
+points((residuals(lmFit)*zhoumo[275:427]),type="p")
+points((residuals(lmFit)*jiaqi[275:427]),type="p",col="red")
+points((residuals(lmFit)*buxiu[275:427]),type="p",col="green")       
+
+
+temp=ts(1:30,frequency=7,start=c(1,1))
+Pseason=seasonaldummy(temp)
+toP=data.frame(Pseason,jiaqi6=(1:30%in%6)+0,jiaqi7=(1:30%in%7)+0,jiaqiN=(1:30%in%8) +0,buxiu=(1:30%in%28) +0,jihao=1:30,qian1=(1:30%in%c(5,30))+0,qian2=(1:30%in%c(4,29))+0)
+redeem=predict(lmFit,toP)
+
+
+plot(redeem,type="l")
+temp=read.csv("7_13.csv",header=FALSE)
+points(temp[,3],col="red",type="l")
 ##修正6、 7号节日
 (myTot$redeem[279]+myTot$redeem[335])/2
 (myTot$redeem[280]+myTot$redeem[336])/2
@@ -99,7 +138,4 @@ new_Tot=read.csv("new_Tot.csv")
 
 
 plot(old_Tot$purchase)
-
-
-
 
