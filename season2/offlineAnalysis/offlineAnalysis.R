@@ -107,7 +107,7 @@ myD$qian1=(1:427 %in% c(278,304,334))+0
 #假期前2天特征
 myD$qian2=(1:427 %in% c(277,303,333))+0
 myD=myD[275:427,]
-lmFit=lm(redeem~.,myD)
+lmFit=lm(redeem~.-jihao,myD)
 plot(residuals(lmFit),type="o")
 temp=(strftime(myTot$report_date,format="%d")=="01")
 temp2=(1:427)[temp]
