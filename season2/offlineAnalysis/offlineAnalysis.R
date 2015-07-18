@@ -31,7 +31,7 @@ yuechu=(strftime(myTot$report_date,format="%d")=="01")+0
 #########################
 sx=ts(myTot$purchase,frequency=7,start=c(1,1))
 
-plot(1:200,myTot$purchase[1:200],type="l")
+plot(275:427,myTot$purchase[275:427],type="l")
 temp=(strftime(myTot$report_date,format="%d")=="01")
 temp2=(1:427)[temp]
 abline(v=temp2)
