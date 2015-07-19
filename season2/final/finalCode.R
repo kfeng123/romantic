@@ -23,9 +23,50 @@ part1=part1[,-4]
 part1[,3]=as.numeric(part1[,3])
 names(part1)=c("report_date","total_purchase_amt","total_redeem_amt")
 
+#old1数据
+#3w用户
+old1=read.csv("old1.csv")
+
+#old2数据
+#3w用户
+old2=read.csv("old2.csv")
+old2=old2[,-1]
+names(old2)=c("report_date","total_purchase_amt","total_redeem_amt")
+
+###########探索性数据分析
+myPlotTot=function(hhh){
+        plot(275:427,hhh[275:427],type="l")
+        temp=(strftime(finalTot$report_date,format="%d")=="01")
+        temp2=(1:427)[temp]
+        abline(v=temp2)
+        sx=ts(finalTot$total_purchase_amt,frequency=7,start=c(1,1))
+        points(1:427,(hhh*(cycle(sx)==1 +0)),type="p")
+        points(1:427,(hhh*jiaqi),type="p",col="red")
+        points(1:427,(hhh*buxiu),type="p",col="green")
+}
+myPlotTot(finalTot$total_purchase_amt)
+myPlotTot(part1$total_purchase_amt)
+myPlotTot((finalTot$total_purchase_amt+part1$total_purchase_amt+old1$total_purchase_amt+old2$total_purchase_amt)/2.6)
+myPlotTot(old1$total_purchase_amt)
+myPlotTot(old2$total_purchase_amt)
+
+myPlotTot(finalTot$total_redeem_amt)
+myPlotTot(part1$total_redeem_amt)
+myPlotTot((finalTot$total_redeem_amt+part1$total_redeem_amt+old1$total_redeem_amt+old2$total_redeem_amt)/2.6)
+myPlotTot(old1$total_redeem_amt)
+myPlotTot(old2$total_redeem_amt)
+
+
+
 plot(finalTot$total_redeem_amt,type="l")
 lines(part1$total_redeem_amt,col="red")
+lines((finalTot$total_redeem_amt+part1$total_redeem_amt+old1$total_redeem_amt+old2$total_redeem_amt)/2.6,col="red")
 
+plot(old1$total_redeem_amt,type="l")
+lines(old2$total_redeem_amt,col="red")
+
+plot(finalTot$total_purchase_amt,type="l")
+lines((finalTot$total_purchase_amt+part1$total_purchase_amt+old1$total_purchase_amt+old2$total_purchase_amt)/2.6,col="red")
 
 
 
@@ -81,17 +122,46 @@ toP=data.frame(Pseason
                ,qian2=(1:30%in%c(4,29))+0
                ,t=428:457)
 
-#################模型
+#################purchase模型
 library("mgcv")
-myFeature$purchase=(part1$total_purchase_amt+finalTot$total_purchase_amt)/2
-lmFit=gam(purchase~S1+S2+S3+S4+S5+S6+yuechu+buxiu+jiaqiN+jiaqi6+jiaqi7+s(jihao)+s(t),data=myFeature[275:427,],family=Gamma(link="log"))
-lines(exp(predict(lmFit,toP)),type="o",col="blue")
+formulaStr="purchase~S1+S2+S3+S4+S5+S6+yuechu+buxiu+jiaqiN+jiaqi6+jiaqi7"
+#formulaStr="purchase~S1+S2+S3+S4+S5+S6+yuechu+buxiu+jiaqiN"
 
-plot(residuals(lmFit),type="o")
-temp=(strftime(finalTot$report_date,format="%d")=="01")
-temp2=(1:427)[temp]
-abline(v=temp2-274)
-points((residuals(lmFit)*zhoumo[275:427]),type="p")
-points((residuals(lmFit)*jiaqi[275:427]),type="p",col="red")
-points((residuals(lmFit)*buxiu[275:427]),type="p",col="green")       
+#final
+myFeature$purchase=finalTot$total_purchase_amt
+finalFit=gam(as.formula(formulaStr),data=myFeature[275:427,],family=Gamma(link="log"))
+#part1
+myFeature$purchase=part1$total_purchase_amt
+part1Fit=gam(as.formula(formulaStr),data=myFeature[275:427,],family=Gamma(link="log"))
+#26w人全部数据
+myFeature$purchase=(finalTot$total_purchase_amt+part1$total_purchase_amt+old1$total_purchase_amt+old2$total_purchase_amt)/2.6
+totalFit=gam(as.formula(formulaStr),data=myFeature[275:427,],family=Gamma(link="log"))
 
+#################redeem模型
+formulaStr="redeem~S1+S2+S3+S4+S5+S6+buxiu+jiaqiN+jiaqi6+jiaqi7+qian1+qian2+s(jihao)"
+#final
+myFeature$redeem=finalTot$total_redeem_amt
+finalFit=gam(as.formula(formulaStr),data=myFeature[275:427,],family=Gamma(link="log"))
+#part1
+myFeature$redeem=part1$total_redeem_amt
+part1Fit=gam(as.formula(formulaStr),data=myFeature[275:427,],family=Gamma(link="log"))
+#26w人全部数据
+myFeature$redeem=(finalTot$total_redeem_amt+part1$total_redeem_amt+old1$total_redeem_amt+old2$total_redeem_amt)/2.6
+totalFit=gam(as.formula(formulaStr),data=myFeature[275:427,],family=Gamma(link="log"))
+############画图
+lines(exp(predict(finalFit,toP)),type="o")
+lines(exp(predict(part1Fit,toP)),type="o",col="blue")
+lines(exp(predict(totalFit,toP)),type="o",col="red")
+
+myPlotRes=function(lmFit){
+        plot(residuals(lmFit),type="o")
+        temp=(strftime(finalTot$report_date,format="%d")=="01")
+        temp2=(1:427)[temp]
+        abline(v=temp2-274)
+        points((residuals(lmFit)*zhoumo[275:427]),type="p")
+        points((residuals(lmFit)*jiaqi[275:427]),type="p",col="red")
+        points((residuals(lmFit)*buxiu[275:427]),type="p",col="green")       
+}
+myPlotRes(finalFit)
+myPlotRes(part1Fit)
+myPlotRes(totalFit)

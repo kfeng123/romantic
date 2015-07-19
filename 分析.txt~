@@ -1,41 +1,20 @@
 !!!!!!!!!!!!In words, if the standard deviation of the series is proportional to the level of the series,then transforming to logarithms will produce a series with approximately constant variance over time.(TSA P98)
 
-申购赎回与其他特征的关系：先判别再回归
-
-识别不活跃用户
-
 !!!!!!对用户聚类!!!!!!!!!!!!!!!!!!!!!!!!!
 
 ！！！！分敏感用户和不敏感用户
 
-！！！30天外推太多了，只考虑预测几天的，但到底预测几天，需要理论
-
-！！！波动率的估计
-
 ！！！！！！！！！！！申购与赎回作为二元时间序列
-
-！！！！！！！！！！月是不是一个季节项？
 
 !!!!!!!!稳健回归
 
-！！！！！压缩
-
 !!!!!!!!!!!!减去常数（不活跃用户），再取log！！！！！！！！！！
-
-
-！！！！！！！！！！！对于每一天，识别前后一个月都没有操作的用户！！！！！！！！！！！
-
-!!!!!!!!!!!!diff(log())
 
 !!!!!!!!!!!cox变换，TSA P101
 
 !!!!!!!!!!!!找出outliers
 
-!!!!!!!!!!!!是否要加上季节项
-
 ！！！！！！armax模型
-
-！！！！！！！！！！?seasonaldummy
 
 
 the time series is only affected at time T if it has an additive outlier at T
@@ -48,22 +27,13 @@ See Chang et al. (1988) for another approach to classifying the nature of an out
 When an outlier is found, it can be incorporated into the model, and the outlier-detection procedure can then be repeated with the refined model until no more outliers are found.
 
 
-对tftobal_amt建模遇到了问题，如果指定d=1,D=1那么趋势是向下的，如果指定d=0,D=1,那么趋势是向上的，差别特别大
-
 ?detectAO
 ?detectIO
 
-
-
 用kmeans对用户的聚类还是比较理想的，但是超级土豪还需要手动给筛出来
-
-
 
 考虑outlier时间点时哪些用户的贡献大，这些是异常用户
 
-
-
-暴力循环得到哪些变量或者哪些用户放到一起MAE最小
 svd
 
 
@@ -77,9 +47,6 @@ stl+arima
 自己的回归基础太差了
 
 数据集AirPassengers挺像的
-
-复鹰(693545461) 16:43:10 
-其实我就是把总Purchase和Redeem的时间序列当成一个信号，然后既然是信号就有大尺度衰落和小尺度衰落
 
 
 3月10日，4月9日，5月5日，6月9日，7月1日，8月1日
