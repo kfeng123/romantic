@@ -14,9 +14,9 @@ d14=read.csv("7_14.csv",header=FALSE)
 d15=read.csv("7_15.csv",header=FALSE)
 
 myTot=read.csv("offlineAnalysis/myTot.csv",header=FALSE)
-plot(d13[,2],type="o")
-points(d13[,2],type="o",col="red")
-points(d13[,2],type="o",col="blue")
+plot(d14[,2],type="o")
+points(d14[,3],type="o",col="red")
+points(d15[,2],type="o",col="blue")
 
 
 points(finalTot$total_redeem_amt[400:427],type="o",col="blue")
