@@ -132,19 +132,14 @@ toP=data.frame(Pseason
 
 #################purchase模型
 library("mgcv")
-formulaStr="purchase~S1+S2+S3+S4+S5+S6+yuechu+buxiu+jiaqiN+jiaqi6+jiaqi7"
+formulaStr="purchase~S1+S2+S3+S4+S5+S6+yuechu+buxiu+jiaqiN+jiaqi6+jiaqi7+s(t)"
 #final
 myFeature$purchase=finalTot$total_purchase_amt
 finalFit=gam(as.formula(formulaStr),data=myFeature[275:427,],family=Gamma(link="log"))
 purchase=exp(predict(finalFit,toP))
-purchase[30]=purchase[30]*0.8
-purchase[29]=purchase[29]*0.9
-purchase[28]=900000000
-purchase[8]=480000000
-
-
-
-
+myPlotRes(finalFit)
+plot(purchase,type="l")
+myPlotTot(finalTot$total_purchase_amt)
 
 
 
@@ -204,12 +199,7 @@ myPlotRes(finalFit)
 myPlotRes(part1Fit)
 myPlotRes(totalFit)
 
-
-
-
-
-
-
+plot
 
 
 
@@ -248,3 +238,46 @@ plot(purchase,type="l")
 
 write.csv(as.integer(purchase),"purchase1.csv",row.names=FALSE)
 write.csv(as.integer(redeem),"redeem1.csv",row.names=FALSE)
+
+
+
+
+########第二天提交
+
+#################purchase模型
+library("mgcv")
+formulaStr="purchase~S1+S2+S3+S4+S5+S6+yuechu+buxiu+jiaqiN+jiaqi6+jiaqi7+s(jihao)"
+#final
+myFeature$purchase=finalTot$total_purchase_amt
+finalFit=gam(as.formula(formulaStr),data=myFeature[275:427,],family=Gamma(link="log"))
+purchase=exp(predict(finalFit,toP))
+plot(purchase,type="l",col="red")
+lines(finalTot$total_purchase_amt[400:427])
+myPlotTot(finalTot$total_purchase_amt)
+purchase[30]=purchase[30]*0.8
+purchase[29]=purchase[29]*0.9
+
+myFeature$shang=(finalTot$total_purchase_amt/gam(purchase~s(t),data=myFeature)$fitted.values)
+tempFit=lm(shang~S1+S2+S3+S4+S5+S6,data=myFeature)
+plot(myFeature$shang,type="l")
+myPlotTot(myFeature$shang-tempFit$fitted.values)
+lines(tempFit$fitted.values,col="red")
+#################redeem模型
+formulaStr="redeem~S1+S2+S3+S4+S5+S6+buxiu+jiaqiN+jiaqi6+jiaqi7+s(jihao)"
+#final
+myFeature$redeem=finalTot$total_redeem_amt
+finalFit=gam(as.formula(formulaStr),data=myFeature[275:427,],family=Gamma(link="log"))
+redeem=exp(predict(finalFit,toP))
+myPlotTot(finalTot$total_redeem_amt)
+
+myFeature$shang=(finalTot$total_redeem_amt/gam(redeem~s(t),data=myFeature)$fitted.values)
+tempFit=lm(shang~S1+S2+S3+S4+S5+S6,data=myFeature)
+plot(myFeature$shang,type="l")
+myPlotTot(myFeature$shang-tempFit$fitted.values)
+lines(tempFit$fitted.values,col="red")
+
+plot(myFeature$shang-tempFit$fitted.values,type="o")
+
+
+write.csv(as.integer(purchase),"purchase2.csv",row.names=FALSE)
+write.csv(as.integer(redeem),"redeem2.csv",row.names=FALSE)

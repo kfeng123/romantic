@@ -1,3 +1,6 @@
 purchase 29 30号建模
 purchase要不要加jihao
 redeem 4 5号要不要加特征
+
+
+先加光滑，然后估出单点，然后减去单点，再用普通回归。

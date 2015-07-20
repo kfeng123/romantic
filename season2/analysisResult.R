@@ -13,9 +13,9 @@ d13=read.csv("7_13.csv",header=FALSE)
 d14=read.csv("7_14.csv",header=FALSE)
 d15=read.csv("7_15.csv",header=FALSE)
 
-myTot=read.csv("offlineAnalysis/myTot.csv",header=FALSE)
+#myTot=read.csv("offlineAnalysis/myTot.csv",header=FALSE)
 plot(d14[,2],type="o")
-points(d14[,3],type="o",col="red")
+points(d14[,2],type="o",col="red")
 points(d15[,2],type="o",col="blue")
 
 
