@@ -48,6 +48,7 @@ myPlotTot=function(hhh){
         points(1:427,(hhh*buxiu),type="p",col="green")
 }
 myPlotTot(finalTot$total_purchase_amt)
+myPlotTot(num[,2])
 myPlotTot(medianTot$total_purchase_amt)
 myPlotTot(part1$total_purchase_amt)
 myPlotTot((finalTot$total_purchase_amt+part1$total_purchase_amt+old1$total_purchase_amt+old2$total_purchase_amt)/2.6)
@@ -281,3 +282,13 @@ plot(myFeature$shang-tempFit$fitted.values,type="o")
 
 write.csv(as.integer(purchase),"purchase2.csv",row.names=FALSE)
 write.csv(as.integer(redeem),"redeem2.csv",row.names=FALSE)
+
+
+
+############第三天
+myFeature$shang=(finalTot$total_purchase_amt/gam(purchase~s(t,k=14),data=myFeature)$fitted.values)
+tempFit=lm(shang~S1+S2+S3+S4+S5+S6,data=myFeature)
+plot(myFeature$shang,type="l")
+myFeature$rrr=myFeature$shang-tempFit$fitted.values
+myPlotTot(myFeature$rrr-gam(rrr~s(jihao,k=30),data=myFeature)$fitted.values)
+lines(tempFit$fitted.values,col="red")
